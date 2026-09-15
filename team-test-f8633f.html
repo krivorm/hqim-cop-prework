@@ -763,7 +763,10 @@ Data sharing agreements are in place with schools`
     if(min === max){
       takeaway = 'Every answer landed in Dimension ' + min + ': ' + DIMENSIONS[min-1].name + '.';
     } else if(ties.length > 1){
-      takeaway = 'Answers span Dimension ' + min + ' to Dimension ' + max + ', split evenly across Dimension ' + ties.join(' and ') + '.';
+      var tieText = ties.length === 2
+        ? 'Dimensions ' + ties[0] + ' and ' + ties[1]
+        : 'Dimensions ' + ties.slice(0, -1).join(', ') + ' and ' + ties[ties.length - 1];
+      takeaway = 'Answers span Dimension ' + min + ' to Dimension ' + max + ', split evenly across ' + tieText + '.';
     } else {
       takeaway = 'Answers span Dimension ' + min + ' to Dimension ' + max + ', most concentrated in Dimension ' + modeVal + ': ' + DIMENSIONS[modeVal-1].name + '.';
     }
