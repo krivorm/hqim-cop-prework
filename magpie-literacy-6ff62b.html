@@ -161,7 +161,7 @@ button{font-family:inherit;}
 
 .tier-option{display:block;width:100%;text-align:left;border:2px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:var(--bg);cursor:pointer;background-color:var(--bg);}
 .tier-option .opt-head{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
-.opt-dot{width:15px;height:15px;border-radius:4px;border:2px solid var(--ink-soft);flex:none;position:relative;}.tier-option.is-selected .opt-dot::after{content:'';position:absolute;left:3px;top:0px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}.multi-hint{font-family:'DM Mono',monospace;font-size:.74rem;letter-spacing:.03em;color:var(--ink-soft);margin:-8px 0 16px;}.multi-hint strong{color:var(--accent-text);font-weight:600;}.notes-block{margin:4px 0 20px;}.notes-block label{display:block;font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}.notes-block textarea{width:100%;box-sizing:border-box;min-height:74px;resize:vertical;padding:11px 13px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.92rem;line-height:1.5;}.notes-block textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}.profile-note{font-size:.85rem;line-height:1.55;color:var(--ink-soft);margin:2px 0 14px;padding-left:2px;}.profile-note strong{color:var(--ink);font-weight:600;}
+.opt-dot{width:15px;height:15px;border-radius:4px;border:2px solid var(--ink-soft);flex:none;position:relative;}.tier-option.is-selected .opt-dot::after{content:'';position:absolute;left:3px;top:0px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}.multi-hint{font-family:'DM Mono',monospace;font-size:.74rem;letter-spacing:.03em;color:var(--ink-soft);margin:-8px 0 16px;}.multi-hint strong{color:var(--accent-text);font-weight:600;}.save-status{display:block;margin-top:10px;font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.5;color:var(--ink-soft);}.step-warn{margin:14px 0 0;padding:10px 13px;border-radius:8px;border:1px solid var(--accent);background:#fbe9ea;color:var(--accent-text);font-family:'DM Sans',sans-serif;font-size:.86rem;}@media (prefers-color-scheme: dark){.step-warn{background:rgba(193,10,28,.16);}}:root[data-theme="dark"] .step-warn{background:rgba(193,10,28,.16);}:root[data-theme="light"] .step-warn{background:#fbe9ea;}.step-org{font-family:'DM Mono',monospace;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px;}.step-org strong{color:var(--ink);}.notes-block{margin:4px 0 20px;}.notes-block label{display:block;font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:6px;}.notes-block textarea{width:100%;box-sizing:border-box;min-height:74px;resize:vertical;padding:11px 13px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;font-size:.92rem;line-height:1.5;}.notes-block textarea:focus{outline:2px solid var(--accent);outline-offset:1px;}.profile-note{font-size:.85rem;line-height:1.55;color:var(--ink-soft);margin:2px 0 14px;padding-left:2px;}.profile-note strong{color:var(--ink);font-weight:600;}
 .opt-dimlabel{font-family:'DM Mono';font-size:.68rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);}
 .opt-dimname{font-family:'Instrument Sans';font-weight:700;font-size:.92rem;}
 .tier-option.is-selected{border-color:var(--accent);background:#fbe9ea;}
@@ -218,12 +218,12 @@ button{font-family:inherit;}
   </header>
 
   <div class="mode-tabs" role="tablist">
-    <button class="mode-tab is-active" data-mode="explore" role="tab" aria-selected="true">Explore the Framework</button>
-    <button class="mode-tab" data-mode="assess" role="tab" aria-selected="false">Assess Your Organization</button>
+    <button class="mode-tab" data-mode="explore" role="tab" aria-selected="false">Explore the Framework</button>
+    <button class="mode-tab is-active" data-mode="assess" role="tab" aria-selected="true">Assess Your Organization</button>
   </div>
 
   <!-- EXPLORE MODE -->
-  <section class="mode-panel is-active" id="panel-explore">
+  <section class="mode-panel" id="panel-explore">
     <div class="ladder-wrap">
       <div class="ladder-label-row">
         <h2>The rigor ladder</h2>
@@ -241,7 +241,7 @@ button{font-family:inherit;}
   </section>
 
   <!-- ASSESS MODE -->
-  <section class="mode-panel" id="panel-assess">
+  <section class="mode-panel is-active" id="panel-assess">
     <div id="assessWizard"></div>
   </section>
 
@@ -741,6 +741,7 @@ Data sharing agreements are in place with schools`
     host.innerHTML =
       '<div class="step-progress">' + dots + '</div>' +
       intro +
+      '<p class="step-org">Completing as <strong>' + escapeHtml(orgName) + '</strong></p>' +
       '<div class="step-header">' +
         '<span class="cat-icon" style="width:26px;height:26px;color:var(--accent-text);"><svg viewBox="0 0 24 24" style="fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;">' + ICONS[cat.icon] + '</svg></span>' +
         '<h2>' + escapeHtml(cat.name) + '</h2>' +
@@ -783,7 +784,21 @@ Data sharing agreements are in place with schools`
     document.getElementById('nextBtn').addEventListener('click', function(){
       if(!stepReady(cat)){
         var ni2 = document.getElementById('nameInput');
-        if(ni2 && !respondentName.trim()) ni2.focus();
+        var needsName = currentStep === 0 && !respondentName.trim();
+        var warn = document.getElementById('stepWarn');
+        if(!warn){
+          warn = document.createElement('p');
+          warn.id = 'stepWarn';
+          warn.className = 'step-warn';
+          warn.setAttribute('role', 'alert');
+          var row = document.querySelector('#assessWizard .btn-row');
+          if(row && row.parentNode) row.parentNode.insertBefore(warn, row);
+        }
+        warn.textContent = needsName
+          ? 'Please add your name before continuing.'
+          : 'Please select at least one dimension for this category before continuing.';
+        if(needsName && ni2) ni2.focus();
+        warn.scrollIntoView({behavior:'smooth', block:'nearest'});
         return;
       }
       currentStep++;
@@ -792,8 +807,23 @@ Data sharing agreements are in place with schools`
   }
 
   function computeSummary(){
-    var dims = [];
-    CATEGORIES.forEach(function(c){ (answers[c.id] || []).forEach(function(d){ dims.push(d); }); });
+    /* On four categories the framework defines no Dimension 1 criteria, so a Dimension 1
+       pick there means not yet started. Counting those as real ratings can invent the
+       headline, so they are tallied separately. */
+    var dims = [], notStarted = 0;
+    CATEGORIES.forEach(function(c){
+      var isNA = (c.cells[0] || '').trim() === 'n/a';
+      (answers[c.id] || []).forEach(function(d){
+        if(isNA && d === 1){ notStarted++; return; }
+        dims.push(d);
+      });
+    });
+    var naNote = notStarted
+      ? ' ' + notStarted + (notStarted === 1 ? ' category is' : ' categories are') + ' marked not yet started.'
+      : '';
+    if(!dims.length && notStarted){
+      return {min:0, max:0, modeVal:0, takeaway:'Every category is marked not yet started.'};
+    }
     if(!dims.length){ return {min:0, max:0, modeVal:0, takeaway:'No answers yet.'}; }
     var min = Math.min.apply(null, dims), max = Math.max.apply(null, dims);
     var freq = [0,0,0,0,0];
@@ -803,14 +833,14 @@ Data sharing agreements are in place with schools`
     for(var d2=1; d2<=4; d2++){ if(freq[d2] === modeCount) ties.push(d2); }
     var takeaway;
     if(min === max){
-      takeaway = 'Every answer landed in Dimension ' + min + ': ' + DIMENSIONS[min-1].name + '.';
+      takeaway = 'Every rating landed in Dimension ' + min + ': ' + DIMENSIONS[min-1].name + '.' + naNote;
     } else if(ties.length > 1){
       var tieText = ties.length === 2
         ? 'Dimensions ' + ties[0] + ' and ' + ties[1]
         : 'Dimensions ' + ties.slice(0, -1).join(', ') + ' and ' + ties[ties.length - 1];
-      takeaway = 'Answers span Dimension ' + min + ' to Dimension ' + max + ', split evenly across ' + tieText + '.';
+      takeaway = 'Ratings span Dimension ' + min + ' to Dimension ' + max + ', split evenly across ' + tieText + '.' + naNote;
     } else {
-      takeaway = 'Answers span Dimension ' + min + ' to Dimension ' + max + ', most concentrated in Dimension ' + modeVal + ': ' + DIMENSIONS[modeVal-1].name + '.';
+      takeaway = 'Ratings span Dimension ' + min + ' to Dimension ' + max + ', most concentrated in Dimension ' + modeVal + ': ' + DIMENSIONS[modeVal-1].name + '.' + naNote;
     }
     return {min:min, max:max, modeVal:modeVal, takeaway:takeaway};
   }
@@ -842,6 +872,7 @@ Data sharing agreements are in place with schools`
         '<span id="saveStatus" class="save-status" role="status"></span>' +
       '</div>' +
       '<div class="btn-row">' +
+        '<button class="btn secondary" id="editBtn">Edit answers</button>' +
         '<button class="btn secondary" id="copyBtn">Copy summary</button>' +
         '<button class="btn secondary" id="restartBtn">Start over</button>' +
       '</div>' +
@@ -913,9 +944,18 @@ Data sharing agreements are in place with schools`
   function wireResults(){
     var saveBtn = document.getElementById('saveTrackerBtn');
     if(saveBtn) saveBtn.addEventListener('click', doSave);
+    var editBtn = document.getElementById('editBtn');
+    if(editBtn) editBtn.addEventListener('click', function(){
+      /* Back into the questions with every answer and note intact. */
+      currentStep = 0; renderAssess();
+    });
     var restartBtn = document.getElementById('restartBtn');
     if(restartBtn) restartBtn.addEventListener('click', function(){
-      answers = {}; notes = {}; currentStep = 0; saveLocal(); renderAssess();
+      if(!window.confirm('This clears all of your answers and notes and starts from question 1. Continue?')) return;
+      answers = {}; notes = {}; currentStep = 0;
+      /* Clear the submitted flag too, or a reopened page shows an empty submitted profile. */
+      SUBMITTED = false; SUBMITTED_AT = null;
+      saveLocal(); renderAssess();
     });
     var copyBtn = document.getElementById('copyBtn');
     if(copyBtn) copyBtn.addEventListener('click', function(){
@@ -939,18 +979,24 @@ Data sharing agreements are in place with schools`
         var ta = document.createElement('textarea');
         ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
         document.body.appendChild(ta); ta.select();
-        try{ document.execCommand('copy'); }catch(e){}
+        var ok = false;
+        try{ ok = document.execCommand('copy'); }catch(e){ ok = false; }
         document.body.removeChild(ta);
+        return ok;
       }
       var done = function(){
         var original = copyBtn.textContent;
         copyBtn.textContent = 'Copied';
         setTimeout(function(){ copyBtn.textContent = original; }, 1800);
       };
+      function failed(){
+        copyBtn.textContent = 'Select the text and copy';
+        setTimeout(function(){ copyBtn.textContent = 'Copy summary'; }, 3000);
+      }
       if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(); done(); });
+        navigator.clipboard.writeText(text).then(done).catch(function(){ if(fallbackCopy()){ done(); } else { failed(); } });
       } else {
-        fallbackCopy(); done();
+        if(fallbackCopy()){ done(); } else { failed(); }
       }
     });
   }
