@@ -673,6 +673,32 @@ Data sharing agreements are in place with schools`
   var ORG_LOCKED = true;
   orgName = ORG_NAME;
 
+  var STORE_KEY = 'cop-dimensions-' + ORG_NAME;
+  function saveLocal(){
+    try{
+      window.localStorage.setItem(STORE_KEY, JSON.stringify({
+        answers: answers, notes: notes, respondentName: respondentName,
+        submitted: SUBMITTED, submittedAt: SUBMITTED_AT
+      }));
+    }catch(e){}
+  }
+  function loadLocal(){
+    try{
+      var raw = window.localStorage.getItem(STORE_KEY);
+      if(!raw) return;
+      var s = JSON.parse(raw);
+      if(s && typeof s === 'object'){
+        answers = s.answers || {};
+        notes = s.notes || {};
+        respondentName = s.respondentName || '';
+        SUBMITTED = !!s.submitted;
+        SUBMITTED_AT = s.submittedAt || null;
+        /* Land them on their own profile rather than a blank first question. */
+        if(SUBMITTED) currentStep = CATEGORIES.length;
+      }
+    }catch(e){}
+  }
+
   function renderAssess(){
     var host = document.getElementById('assessWizard');
     if(currentStep >= CATEGORIES.length){
@@ -714,7 +740,7 @@ Data sharing agreements are in place with schools`
         '<h2>' + escapeHtml(cat.name) + '</h2>' +
         '<span class="step-counter">Step ' + (currentStep+1) + ' of ' + CATEGORIES.length + '</span>' +
       '</div>' +
-      '<p class="multi-hint">Pick <strong>every</strong> dimension that describes where you are today. More than one is fine.</p>' +
+      '<p class="multi-hint">Pick <strong>every</strong> dimension that describes where you are today. You may have multiple ratings for each category.</p>' +
       options +
       '<div class="notes-block"><label for="noteInput">Notes on your rating</label>' +
         '<textarea id="noteInput">' +
@@ -731,13 +757,14 @@ Data sharing agreements are in place with schools`
         var at = list.indexOf(d);
         if(at === -1){ list.push(d); list.sort(); } else { list.splice(at, 1); }
         answers[cat.id] = list;
+        saveLocal();
         renderAssess();
       });
     });
     var noteInput = document.getElementById('noteInput');
-    if(noteInput) noteInput.addEventListener('input', function(){ notes[cat.id] = noteInput.value; });
+    if(noteInput) noteInput.addEventListener('input', function(){ notes[cat.id] = noteInput.value; saveLocal(); });
     var nameInput = document.getElementById('nameInput');
-    if(nameInput) nameInput.addEventListener('input', function(){ respondentName = nameInput.value; });
+    if(nameInput) nameInput.addEventListener('input', function(){ respondentName = nameInput.value; saveLocal(); });
 
     document.getElementById('backBtn').addEventListener('click', function(){
       if(currentStep > 0){ currentStep--; renderAssess(); }
@@ -787,7 +814,7 @@ Data sharing agreements are in place with schools`
     }).join('');
 
     var savedNote = SUBMITTED
-      ? '<p>Submitted' + (SUBMITTED_AT ? (' on ' + new Date(SUBMITTED_AT).toLocaleString()) : '') + '. Thanks!</p>'
+      ? '<p>Submitted' + (SUBMITTED_AT ? (' on ' + new Date(SUBMITTED_AT).toLocaleString()) : '') + '. Thanks! Keep this link. Reopening it in this browser brings your answers back, and Copy summary below gives you a version you can paste into your own notes.</p>'
       : '<p>Submitting sends your answers directly to Cambiar\u2019s tracker.</p>';
     return '<div class="results-card">' +
       '<h2>Your R&amp;E maturity profile</h2>' +
@@ -853,6 +880,7 @@ Data sharing agreements are in place with schools`
       settled = true;
       frame.removeEventListener('load', onSettled);
       SUBMITTED = true; SUBMITTED_AT = submittedAt;
+      saveLocal();
       renderAssess();
     }
     frame.addEventListener('load', onSettled);
@@ -871,7 +899,7 @@ Data sharing agreements are in place with schools`
     if(saveBtn) saveBtn.addEventListener('click', doSave);
     var restartBtn = document.getElementById('restartBtn');
     if(restartBtn) restartBtn.addEventListener('click', function(){
-      answers = {}; notes = {}; currentStep = 0; renderAssess();
+      answers = {}; notes = {}; currentStep = 0; saveLocal(); renderAssess();
     });
     var copyBtn = document.getElementById('copyBtn');
     if(copyBtn) copyBtn.addEventListener('click', function(){
@@ -916,6 +944,7 @@ Data sharing agreements are in place with schools`
   buildCategoryList();
   setupSearch();
   setupModeTabs();
+  loadLocal();
   renderAssess();
 })();
 </script>
