@@ -262,6 +262,22 @@ button{font-family:inherit;}
   <input type="hidden" name="takeaway">
   <input type="hidden" name="categoryAnswers">
   <input type="hidden" name="explainerNotes">
+  <input type="hidden" name="d_purpose">
+  <input type="hidden" name="n_purpose">
+  <input type="hidden" name="d_capacity">
+  <input type="hidden" name="n_capacity">
+  <input type="hidden" name="d_design">
+  <input type="hidden" name="n_design">
+  <input type="hidden" name="d_duration">
+  <input type="hidden" name="n_duration">
+  <input type="hidden" name="d_sample">
+  <input type="hidden" name="n_sample">
+  <input type="hidden" name="d_questions">
+  <input type="hidden" name="n_questions">
+  <input type="hidden" name="d_sources">
+  <input type="hidden" name="n_sources">
+  <input type="hidden" name="d_infra">
+  <input type="hidden" name="n_infra">
   <input type="hidden" name="sourceArtifactLink">
   <input type="hidden" name="submittedAt">
 </form>
@@ -816,6 +832,15 @@ Data sharing agreements are in place with schools`
       if(note) noteLines.push(cat.name + ': ' + note);
     });
     form.elements['explainerNotes'].value = noteLines.join(String.fromCharCode(10) + String.fromCharCode(10));
+    /* Per-category fields so each rating and note lands in its own Airtable column. */
+    var FIELD_KEYS = {'purpose':'purpose', 'capacity':'capacity', 'study':'design', 'duration':'duration', 'sample':'sample', 'questions':'questions', 'sources':'sources', 'infrastructure':'infra'};
+    CATEGORIES.forEach(function(cat){
+      var key = FIELD_KEYS[cat.id];
+      if(!key) return;
+      var sel = (answers[cat.id] || []).slice().sort();
+      form.elements['d_' + key].value = sel.map(function(d){ return 'Dimension ' + d; }).join(', ');
+      form.elements['n_' + key].value = (notes[cat.id] || '').trim();
+    });
     form.elements['sourceArtifactLink'].value = SOURCE_LABEL;
     form.elements['submittedAt'].value = submittedAt;
     var frame = document.getElementById('webhookFrame');
