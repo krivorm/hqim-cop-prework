@@ -871,7 +871,8 @@ Data sharing agreements are in place with schools`
       form.elements['d_' + key].value = sel.map(function(d){ return 'Dimension ' + d; }).join(', ');
       form.elements['n_' + key].value = (notes[cat.id] || '').trim();
     });
-    form.elements['sourceArtifactLink'].value = SOURCE_LABEL;
+    /* The Airtable field is a URL type, so send the real page address. SOURCE_LABEL was plain text and rendered as a broken link. */
+    form.elements['sourceArtifactLink'].value = location.href;
     form.elements['submittedAt'].value = submittedAt;
     var frame = document.getElementById('webhookFrame');
     var settled = false;
