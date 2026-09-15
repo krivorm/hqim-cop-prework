@@ -698,6 +698,13 @@ Data sharing agreements are in place with schools`
     }catch(e){}
   }
 
+  /* The name is required, and only asked on the first step. */
+  function stepReady(cat){
+    if(!(answers[cat.id] || []).length) return false;
+    if(currentStep === 0 && !respondentName.trim()) return false;
+    return true;
+  }
+
   function renderAssess(){
     var host = document.getElementById('assessWizard');
     if(currentStep >= CATEGORIES.length){
@@ -715,7 +722,7 @@ Data sharing agreements are in place with schools`
     if(currentStep === 0){
       intro = '<div class="assess-intro">' +
         '<div><span class="locked-org-label">Organization</span><div class="locked-org-value">' + escapeHtml(orgName) + '</div></div>' +
-        '<div><label for="nameInput">Your name (optional)</label><input id="nameInput" type="text" value="' + escapeHtml(respondentName) + '" placeholder="e.g. Jordan Lee"></div>' +
+        '<div><label for="nameInput">Your name</label><input id="nameInput" type="text" required value="' + escapeHtml(respondentName) + '" placeholder="e.g. Jordan Lee"></div>' +
         '</div>';
     }
 
@@ -746,7 +753,7 @@ Data sharing agreements are in place with schools`
         escapeHtml(notes[cat.id] || '') + '</textarea></div>' +
       '<div class="btn-row">' +
         '<button class="btn secondary" id="backBtn"' + (currentStep === 0 ? ' disabled' : '') + '>Back</button>' +
-        '<button class="btn accent' + ((answers[cat.id]||[]).length ? '' : ' is-disabled') + '" id="nextBtn">' + (currentStep === CATEGORIES.length - 1 ? 'See your results' : 'Next') + '</button>' +
+        '<button class="btn accent' + (stepReady(cat) ? '' : ' is-disabled') + '" id="nextBtn">' + (currentStep === CATEGORIES.length - 1 ? 'See your results' : 'Next') + '</button>' +
       '</div>';
 
     host.querySelectorAll('.tier-option').forEach(function(opt){
@@ -763,13 +770,22 @@ Data sharing agreements are in place with schools`
     var noteInput = document.getElementById('noteInput');
     if(noteInput) noteInput.addEventListener('input', function(){ notes[cat.id] = noteInput.value; saveLocal(); });
     var nameInput = document.getElementById('nameInput');
-    if(nameInput) nameInput.addEventListener('input', function(){ respondentName = nameInput.value; saveLocal(); });
+    if(nameInput) nameInput.addEventListener('input', function(){
+      respondentName = nameInput.value;
+      saveLocal();
+      var nb = document.getElementById('nextBtn');
+      if(nb) nb.className = 'btn accent' + (stepReady(cat) ? '' : ' is-disabled');
+    });
 
     document.getElementById('backBtn').addEventListener('click', function(){
       if(currentStep > 0){ currentStep--; renderAssess(); }
     });
     document.getElementById('nextBtn').addEventListener('click', function(){
-      if(!(answers[cat.id]||[]).length) return;
+      if(!stepReady(cat)){
+        var ni2 = document.getElementById('nameInput');
+        if(ni2 && !respondentName.trim()) ni2.focus();
+        return;
+      }
       currentStep++;
       renderAssess();
     });
